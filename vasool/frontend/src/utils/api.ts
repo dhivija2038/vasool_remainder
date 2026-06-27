@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '', // Request paths are prefixed with /api and proxied via Vite config
+  baseURL: 'https://vasool-reminder.onrender.com/api',
 });
 
 // Automatically inject JWT token into requests if available
