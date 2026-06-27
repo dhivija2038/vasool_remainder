@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           setUser(JSON.parse(savedUser));
           // Verify token against backend /me
-          const response = await api.get('/api/auth/me');
+          const response = await api.get('/auth/me');
           setUser(response.data.user);
           localStorage.setItem('vasool_user', JSON.stringify(response.data.user));
         } catch (error) {
@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await api.post('/api/auth/login', { email, password });
+    const response = await api.post('/auth/login', { email, password });
     const { token, user: loggedUser } = response.data;
     
     localStorage.setItem('vasool_token', token);
