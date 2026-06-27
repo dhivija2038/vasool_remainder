@@ -7,7 +7,7 @@ exports.initDB = initDB;
 exports.getPool = getPool;
 const promise_1 = __importDefault(require("mysql2/promise"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 dotenv_1.default.config();
 const { MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE } = process.env;
 let pool;
@@ -113,7 +113,7 @@ async function seedData() {
             // If an old default/legacy admin account exists, repurpose it instead of
             // creating a duplicate row (keeps the same users table, same architecture).
             const [legacyAdmin] = await connection.query('SELECT * FROM users WHERE username = ?', ['admin']);
-            const hash = await bcrypt_1.default.hash(FIXED_PASSWORD, 10);
+            const hash = await bcryptjs_1.default.hash(FIXED_PASSWORD, 10);
             if (legacyAdmin.length > 0) {
                 await connection.query('UPDATE users SET username = ?, password_hash = ?, owner_name = ? WHERE id = ?', [FIXED_EMAIL, hash, 'Shop Owner', legacyAdmin[0].id]);
                 console.log(`Updated legacy admin account to fixed login: ${FIXED_EMAIL}`);
@@ -126,9 +126,9 @@ async function seedData() {
         else {
             // Make sure the password always matches the required fixed password,
             // in case it was changed previously.
-            const isMatch = await bcrypt_1.default.compare(FIXED_PASSWORD, existingFixedUser[0].password_hash);
+            const isMatch = await bcryptjs_1.default.compare(FIXED_PASSWORD, existingFixedUser[0].password_hash);
             if (!isMatch) {
-                const hash = await bcrypt_1.default.hash(FIXED_PASSWORD, 10);
+                const hash = await bcryptjs_1.default.hash(FIXED_PASSWORD, 10);
                 await connection.query('UPDATE users SET password_hash = ? WHERE id = ?', [hash, existingFixedUser[0].id]);
                 console.log('Synced fixed admin password.');
             }

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.login = login;
 exports.getMe = getMe;
 exports.verifyCurrentUserPassword = verifyCurrentUserPassword;
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const db_1 = require("../config/db");
 async function login(req, res) {
@@ -23,7 +23,7 @@ async function login(req, res) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
         const user = users[0];
-        const isMatch = await bcrypt_1.default.compare(password, user.password_hash);
+        const isMatch = await bcryptjs_1.default.compare(password, user.password_hash);
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
@@ -61,5 +61,5 @@ async function verifyCurrentUserPassword(username, password) {
     const [users] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
     if (users.length === 0)
         return false;
-    return bcrypt_1.default.compare(password, users[0].password_hash);
+    return bcryptjs_1.default.compare(password, users[0].password_hash);
 }
